@@ -1,0 +1,64 @@
+﻿<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form *ngIf="active" #testEntityForm="ngForm" novalidate (ngSubmit)="save()" autocomplete="off" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <span *ngIf="testEntity.id">{{l("EditTestEntity")}}</span>
+                        <span *ngIf="!testEntity.id">{{l("CreateNewTestEntity")}}</span>
+                    </h4>
+                    <button type="button" class="close" (click)="close()" aria-label="Close" [disabled]="saving">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+					<div class="form-group">
+						<label for="TestEntity_Name">{{l("Name")}}</label>
+						<input type="text" id="TestEntity_Name" class="form-control" [(ngModel)]="testEntity.name" name="Name"    />
+                     </div>
+                </div>
+
+     
+                <!-- New upload -->
+                <div class="kt-portlet__body">
+                            <label for="DefaultFileUploadFileInput">Default file uploader</label>
+                            <p-fileUpload multiple="multiple"
+                                          id="DefaultFileUploadFileInput"
+                                          name="DefaultFileUploadFileInput[]"
+                                          [url]="uploadUrl"
+                                          maxFileSize="1000000"
+                                          (onUpload)="onUpload($event)"
+                                          (onBeforeSend)="onBeforeSend($event)">
+                                <ng-template pTemplate="content">
+                                    <ul *ngIf="uploadedFiles.length">
+                                        <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes                                            
+                                        </li>
+                                        <li *ngFor="let file of uploadedFiles2">{{file.name}} - {{file.size}} bytes 
+                                            -- {{file.contentType}} -- {{file.id}}--{{file.name}} - {{file.size}}
+                                            <a href="{{getUrl}}?fileId={{file.id}}&contentType={{file.contentType}}&fileName={{file.name}}">
+                                                {{file.name}}
+                                            </a>                                            
+                                        </li>
+                                      
+                                    </ul>
+                                    
+                                </ng-template>
+                            </p-fileUpload>
+                            <div class="card" *ngFor="let att of this.testEntity.testUpload; let i = index">
+                                <a href="{{getUrl}}?fileId={{att.id}}&contentType={{att.contentType}}">
+                                    {{att.name}}
+                                </a>
+                            </div>
+                </div>
+
+               
+
+                <div class="modal-footer">
+                    <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
+                    <button type="submit" class="btn btn-primary blue" [disabled]="!testEntityForm.form.valid" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

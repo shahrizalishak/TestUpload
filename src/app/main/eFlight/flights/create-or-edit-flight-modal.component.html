@@ -1,0 +1,161 @@
+﻿<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form *ngIf="active" #flightForm="ngForm" novalidate (ngSubmit)="save()" autocomplete="off">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <span *ngIf="flight.id">{{l("EditFlight")}}</span>
+                        <span *ngIf="!flight.id">{{l("CreateNewFlight")}}</span>
+                    </h4>
+                    <button type="button" class="close" (click)="close()" aria-label="Close" [disabled]="saving">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                 
+
+					<div class="form-group m-form__group">
+                        <label for="TravelAgentName">{{l("TravelAgent")}}</label>
+                        <div class="input-group">
+                            <input class="form-control" id="TravelAgentName" name="travelAgentName" [(ngModel)]="travelAgentName" type="text" disabled>     
+                            <div class="input-group-append">
+                                <button class="btn btn-primary blue" (click)="openSelectTravelAgentModal()" type="button"><i class="fa fa-search"></i> {{l("Pick")}}</button>
+                            </div> <div class="input-group-prepend">
+                                <button class="btn btn-danger btn-icon" type="button" (click)="setTravelAgentIdNull()"><i class="fa fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <input class="form-control" name="flight.travelAgentId" [(ngModel)]="flight.travelAgentId" type="text"  hidden>
+		 
+					<div class="form-group m-form__group">
+                        <label for="PurposeName">{{l("Purpose")}}</label>
+                        <div class="input-group">
+                            <input class="form-control" id="PurposeName" name="purposeName" [(ngModel)]="purposeName" type="text" disabled>     
+                            <div class="input-group-append">
+                                <button class="btn btn-primary blue" (click)="openSelectPurposeModal()" type="button"><i class="fa fa-search"></i> {{l("Pick")}}</button>
+                            </div> <div class="input-group-prepend">
+                                <button class="btn btn-danger btn-icon" type="button" (click)="setPurposeIdNull()"><i class="fa fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <input class="form-control" name="flight.purposeId" [(ngModel)]="flight.purposeId" type="text"  hidden>
+		 
+					<div class="form-group m-form__group">
+                        <label for="JobTitleName">{{l("JobTitle")}}</label>
+                        <div class="input-group">
+                            <input class="form-control" id="JobTitleName" name="jobTitleName" [(ngModel)]="jobTitleName" type="text" disabled>     
+                            <div class="input-group-append">
+                                <button class="btn btn-primary blue" (click)="openSelectJobTitleModal()" type="button"><i class="fa fa-search"></i> {{l("Pick")}}</button>
+                            </div> <div class="input-group-prepend">
+                                <button class="btn btn-danger btn-icon" type="button" (click)="setJobTitleIdNull()"><i class="fa fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <input class="form-control" name="flight.jobTitleId" [(ngModel)]="flight.jobTitleId" type="text"  hidden>
+		 
+
+								<div class="form-group">
+									<label for="Flight_Detail">{{l("Detail")}}</label>
+									<input type="text" id="Flight_Detail" class="form-control" [(ngModel)]="flight.detail" name="Detail"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_Name">{{l("Name")}}</label>
+									<input type="text" id="Flight_Name" class="form-control" [(ngModel)]="flight.name" name="Name"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_NRIC">{{l("NRIC")}}</label>
+									<input type="text" id="Flight_NRIC" class="form-control" [(ngModel)]="flight.nric" name="NRIC"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_StaffID">{{l("StaffID")}}</label>
+									<input type="text" id="Flight_StaffID" class="form-control" [(ngModel)]="flight.staffID" name="StaffID"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_Position">{{l("Position")}}</label>
+									<input type="text" id="Flight_Position" class="form-control" [(ngModel)]="flight.position" name="Position"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_Email">{{l("Email")}}</label>
+									<input type="text" id="Flight_Email" class="form-control" [(ngModel)]="flight.email" name="Email"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_PhoneNo">{{l("PhoneNo")}}</label>
+									<input type="text" id="Flight_PhoneNo" class="form-control" [(ngModel)]="flight.phoneNo" name="PhoneNo"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_MembershipNo">{{l("MembershipNo")}}</label>
+									<input type="text" id="Flight_MembershipNo" class="form-control" [(ngModel)]="flight.membershipNo" name="MembershipNo"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_ValidationName">{{l("ValidationName")}}</label>
+									<input type="text" id="Flight_ValidationName" class="form-control" [(ngModel)]="flight.validationName" name="ValidationName"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_ValidationPhoneNo">{{l("ValidationPhoneNo")}}</label>
+									<input type="text" id="Flight_ValidationPhoneNo" class="form-control" [(ngModel)]="flight.validationPhoneNo" name="ValidationPhoneNo"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_ValidationPosition">{{l("ValidationPosition")}}</label>
+									<input type="text" id="Flight_ValidationPosition" class="form-control" [(ngModel)]="flight.validationPosition" name="ValidationPosition"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_ValidationDate">{{l("ValidationDate")}}</label>
+									 <input required class="form-control m-input" type="datetime" bsDatepicker [(ngModel)]="flight.validationDate._d" id="Flight_ValidationDate" name="Flight_ValidationDate">
+								</div>
+					
+								<br/><div class="m-checkbox-list">
+									<label for="Flight_Validation" class="kt-checkbox">
+										<input id="Flight_Validation" type="checkbox" name="Validation" [(ngModel)]="flight.validation"> 
+										{{l("Validation")}}
+										<span></span>
+									</label>
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_ApprovalName">{{l("ApprovalName")}}</label>
+									<input type="text" id="Flight_ApprovalName" class="form-control" [(ngModel)]="flight.approvalName" name="ApprovalName"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_ApprovalPosition">{{l("ApprovalPosition")}}</label>
+									<input type="text" id="Flight_ApprovalPosition" class="form-control" [(ngModel)]="flight.approvalPosition" name="ApprovalPosition"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="Flight_ApprovalDate">{{l("ApprovalDate")}}</label>
+									 <input required class="form-control m-input" type="datetime" bsDatepicker [(ngModel)]="flight.approvalDate._d" id="Flight_ApprovalDate" name="Flight_ApprovalDate">
+								</div>
+					
+								<br/><div class="m-checkbox-list">
+									<label for="Flight_Approval" class="kt-checkbox">
+										<input id="Flight_Approval" type="checkbox" name="Approval" [(ngModel)]="flight.approval"> 
+										{{l("Approval")}}
+										<span></span>
+									</label>
+								</div>
+					
+
+                </div>
+                <div class="modal-footer">
+                    <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
+                    <button type="submit" class="btn btn-primary blue" [disabled]="!flightForm.form.valid" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+<flightTravelAgentLookupTableModal #flightTravelAgentLookupTableModal (modalSave)="getNewTravelAgentId()"></flightTravelAgentLookupTableModal>
+		 <flightPurposeLookupTableModal #flightPurposeLookupTableModal (modalSave)="getNewPurposeId()"></flightPurposeLookupTableModal>
+		 <flightJobTitleLookupTableModal #flightJobTitleLookupTableModal (modalSave)="getNewJobTitleId()"></flightJobTitleLookupTableModal>
+		 
+</div>

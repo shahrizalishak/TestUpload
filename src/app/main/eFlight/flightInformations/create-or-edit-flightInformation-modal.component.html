@@ -1,0 +1,58 @@
+﻿<div bsModal #createOrEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createOrEditModal" aria-hidden="true" [config]="{backdrop: 'static'}">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form *ngIf="active" #flightInformationForm="ngForm" novalidate (ngSubmit)="save()" autocomplete="off">
+                <div class="modal-header">
+                    <h4 class="modal-title">
+                        <span *ngIf="flightInformation.id">{{l("EditFlightInformation")}}</span>
+                        <span *ngIf="!flightInformation.id">{{l("CreateNewFlightInformation")}}</span>
+                    </h4>
+                    <button type="button" class="close" (click)="close()" aria-label="Close" [disabled]="saving">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                 
+
+
+								<div class="form-group">
+									<label for="FlightInformation_DestinationDeparture">{{l("DestinationDeparture")}} *</label>
+									<input type="text" id="FlightInformation_DestinationDeparture" class="form-control" [(ngModel)]="flightInformation.destinationDeparture" name="DestinationDeparture"     required/>
+								</div>
+					
+								<div class="form-group">
+									<label for="FlightInformation_DestinationArraival">{{l("DestinationArraival")}}</label>
+									<input type="text" id="FlightInformation_DestinationArraival" class="form-control" [(ngModel)]="flightInformation.destinationArraival" name="DestinationArraival"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="FlightInformation_Date">{{l("Date")}}</label>
+									 <input required class="form-control m-input" type="datetime" bsDatepicker [(ngModel)]="flightInformation.date._d" id="FlightInformation_Date" name="FlightInformation_Date">
+								</div>
+					
+								<div class="form-group">
+									<label for="FlightInformation_TImeDeparture">{{l("TImeDeparture")}}</label>
+									<input type="text" id="FlightInformation_TImeDeparture" class="form-control" [(ngModel)]="flightInformation.tImeDeparture" name="TImeDeparture"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="FlightInformation_TimeArriaval">{{l("TimeArriaval")}}</label>
+									<input type="text" id="FlightInformation_TimeArriaval" class="form-control" [(ngModel)]="flightInformation.timeArriaval" name="TimeArriaval"    />
+								</div>
+					
+								<div class="form-group">
+									<label for="FlightInformation_FlightId">{{l("FlightId")}}</label>
+									<input type="number" id="FlightInformation_FlightId" class="form-control" [(ngModel)]="flightInformation.flightId" name="FlightId"  />
+								</div>
+					
+
+                </div>
+                <div class="modal-footer">
+                    <button [disabled]="saving" type="button" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
+                    <button type="submit" class="btn btn-primary blue" [disabled]="!flightInformationForm.form.valid" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

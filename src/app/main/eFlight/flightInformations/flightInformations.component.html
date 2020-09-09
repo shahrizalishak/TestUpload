@@ -1,0 +1,224 @@
+﻿<div [@routerTransition]>
+  <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor">
+    <div class="kt-subheader kt-grid__item">
+      <div [class]="containerClass">
+        <div class="kt-subheader__main">
+            <h3 class="kt-subheader__title">
+                <span>{{l("FlightInformations")}}</span>
+            </h3>
+            <span class="kt-subheader__separator kt-subheader__separator--v"></span>
+            <span class="kt-subheader__desc">
+                {{l("FlightInformationsHeaderInfo")}}
+            </span>
+        </div>
+        <div class="kt-subheader__toolbar">
+            <div class="kt-subheader__wrapper">
+				<button (click)="exportToExcel()" class="btn btn-outline-success"><i class="fa fa-file-excel"></i> {{l("ExportToExcel")}}</button>
+                <button *ngIf="isGranted('Pages.FlightInformations.Create')" (click)="createFlightInformation()" 
+			class="btn btn-primary blue"><i class="fa fa-plus"></i> {{l("CreateNewFlightInformation")}}</button>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div [class]="containerClass + ' kt-grid__item kt-grid__item--fluid'">
+        <div class="kt-portlet kt-portlet--mobile">
+            <div class="kt-portlet__body">
+                <form class="kt-form" autocomplete="off">
+                    <div>
+                        <div class="row align-items-center">
+                            <div class="col-xl-12">
+                                <div class="form-group m-form__group align-items-center">
+                                    <div class="input-group">
+                                        <input [(ngModel)]="filterText" name="filterText" autoFocus class="form-control m-input" [placeholder]="l('SearchWithThreeDot')" type="text">
+                                        <span class="input-group-btn">
+                                            <button (click)="getFlightInformations()" class="btn btn-primary" type="submit"><i class="flaticon-search-1"></i></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						 <div class="row" [hidden]="!advancedFiltersAreShown">
+						 	<div class="col-md-12">
+						         <div class="kt-separator kt-separator--border-dashed"></div>
+						     </div>
+
+
+							<div class="col-md-3">
+								<div class="form-group">
+									<label for="DestinationDepartureFilter">{{l("DestinationDeparture")}}</label>
+									<input type="text" class="form-control" id="DestinationDepartureFilter" name="destinationDepartureFilter" [(ngModel)]="destinationDepartureFilter">
+								</div>
+                            </div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label for="DestinationArraivalFilter">{{l("DestinationArraival")}}</label>
+									<input type="text" class="form-control" id="DestinationArraivalFilter" name="destinationArraivalFilter" [(ngModel)]="destinationArraivalFilter">
+								</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+									<label  for="MinDateFilter">{{l("DateRange")}}</label>
+									<div class="input-group">
+                                        <input class="form-control m-input" id="MinDateFilter" name="MinDateFilter" type="datetime" bsDatepicker  placeholder="{{l('MinValue')}}" [(ngModel)]="minDateFilter">
+			                            <span style="line-height: 40px;padding: 0 15px 0 15px;"> &mdash; </span>
+                                        <input class="form-control m-input" id="MaxDateFilter" name="MaxDateFilter" type="datetime" bsDatepicker  placeholder="{{l('MaxValue')}}" [(ngModel)]="maxDateFilter">
+									</div>
+                                </div>
+                            </div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label for="TImeDepartureFilter">{{l("TImeDeparture")}}</label>
+									<input type="text" class="form-control" id="TImeDepartureFilter" name="tImeDepartureFilter" [(ngModel)]="tImeDepartureFilter">
+								</div>
+                            </div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<label for="TimeArriavalFilter">{{l("TimeArriaval")}}</label>
+									<input type="text" class="form-control" id="TimeArriavalFilter" name="timeArriavalFilter" [(ngModel)]="timeArriavalFilter">
+								</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+									<label for="MinFlightIdFilter">{{l("MinMax")}} {{l("FlightId")}}</label>
+									<div class="input-group">
+                                        <input type="number" class="form-control" id="MinFlightIdFilter" [(ngModel)]="minFlightIdFilter" placeholder="{{l('MinValue')}}" name="minFlightIdFilter" />
+                                        <input type="number" class="form-control" [(ngModel)]="maxFlightIdFilter" placeholder="{{l('MaxValue')}}" name="maxFlightIdFilter" />
+									</div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-12">
+                                <span class="clickable-item text-muted" *ngIf="!advancedFiltersAreShown" (click)="advancedFiltersAreShown=!advancedFiltersAreShown"><i class="fa fa-angle-down"></i> {{l("ShowAdvancedFilters")}}</span>
+                                <span class="clickable-item text-muted" *ngIf="advancedFiltersAreShown" (click)="advancedFiltersAreShown=!advancedFiltersAreShown"><i class="fa fa-angle-up"></i> {{l("HideAdvancedFilters")}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="row align-items-center">
+                    <!--<Primeng-Datatable-Start>-->
+                    <div class="primeng-datatable-container col-12"
+                         [busyIf]="primengTableHelper.isLoading">
+                        <p-table #dataTable
+                                     (onLazyLoad)="getFlightInformations($event)"
+                                     [value]="primengTableHelper.records"
+                                     rows="{{primengTableHelper.defaultRecordsCountPerPage}}"
+                                     [paginator]="false"
+                                     [lazy]="true"
+                                     [scrollable]="true"
+                                     ScrollWidth="100%"
+                                     [responsive]="primengTableHelper.isResponsive"
+                                     [resizableColumns]="primengTableHelper.resizableColumns">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 130px" [hidden]="!isGrantedAny('Pages.FlightInformations.Edit', 'Pages.FlightInformations.Delete')">{{l('Actions')}}</th>
+                                    <th style="width: 150px" pSortableColumn="destinationDeparture">
+                                        {{l('DestinationDeparture')}}
+                                        <p-sortIcon field="flightInformation.destinationDeparture"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 150px" pSortableColumn="destinationArraival">
+                                        {{l('DestinationArraival')}}
+                                        <p-sortIcon field="flightInformation.destinationArraival"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 150px" pSortableColumn="date">
+                                        {{l('Date')}}
+                                        <p-sortIcon field="flightInformation.date"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 150px" pSortableColumn="tImeDeparture">
+                                        {{l('TImeDeparture')}}
+                                        <p-sortIcon field="flightInformation.tImeDeparture"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 150px" pSortableColumn="timeArriaval">
+                                        {{l('TimeArriaval')}}
+                                        <p-sortIcon field="flightInformation.timeArriaval"></p-sortIcon>
+                                    </th>
+                                    <th style="width: 150px" pSortableColumn="flightId">
+                                        {{l('FlightId')}}
+                                        <p-sortIcon field="flightInformation.flightId"></p-sortIcon>
+                                    </th>
+
+                                </tr>
+                            </ng-template>                           
+							<ng-template pTemplate="body" let-record="$implicit">
+                                <tr>
+                                    <td style="width: 130px"
+                                        [hidden]="!isGrantedAny('Pages.FlightInformations.Edit', 'Pages.FlightInformations.Delete')">
+                                       <div class="btn-group dropdown" dropdown container="body">
+                                            <button class="dropdown-toggle btn btn-sm btn-primary" dropdownToggle>
+                                                <i class="fa fa-cog"></i><span class="caret"></span> {{l("Actions")}}
+                                            </button>
+												<ul class="dropdown-menu"  *dropdownMenu>
+												<li>
+													<a href="javascript:;"
+														(click)="viewFlightInformationModal.show(record)">{{l('View')}}</a>
+												</li>
+												<li>
+													<a href="javascript:;" *ngIf="permission.isGranted('Pages.FlightInformations.Edit')"
+														(click)="createOrEditFlightInformationModal.show(record.flightInformation.id)">{{l('Edit')}}</a>
+												</li>
+												<li>
+											        <a href="javascript:;" *ngIf="permission.isGranted('Pages.FlightInformations.Delete')"
+														(click)="deleteFlightInformation(record.flightInformation)">{{l('Delete')}}</a>
+												</li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td style="width:150px">
+											<span class="ui-column-title"> {{l('DestinationDeparture')}}</span>
+											{{record.flightInformation.destinationDeparture}}
+										</td>
+                                    <td style="width:150px">
+											<span class="ui-column-title"> {{l('DestinationArraival')}}</span>
+											{{record.flightInformation.destinationArraival}}
+										</td>
+                                    <td style="width:150px">
+										<span class="ui-column-title"> {{l('Date')}}</span>
+                                        <span *ngIf="record.flightInformation.date">
+											{{record.flightInformation.date | momentFormat:'L'}}
+                                        </span>
+                                        <span *ngIf="!record.flightInformation.date">-</span>
+                                    </td>
+                                    <td style="width:150px">
+											<span class="ui-column-title"> {{l('TImeDeparture')}}</span>
+											{{record.flightInformation.tImeDeparture}}
+										</td>
+                                    <td style="width:150px">
+											<span class="ui-column-title"> {{l('TimeArriaval')}}</span>
+											{{record.flightInformation.timeArriaval}}
+										</td>
+                                    <td style="width:150px">
+											<span class="ui-column-title"> {{l('FlightId')}}</span>
+											{{record.flightInformation.flightId}}
+										</td>
+
+                                </tr>
+                            </ng-template>
+                        </p-table>
+						<div class="primeng-no-data" *ngIf="primengTableHelper.totalRecordsCount == 0">
+                            {{l('NoData')}}
+                        </div>
+                        <div class="primeng-paging-container">
+                            <p-paginator [rows]="primengTableHelper.defaultRecordsCountPerPage"
+                                         #paginator
+                                         (onPageChange)="getFlightInformations($event)"
+                                         [totalRecords]="primengTableHelper.totalRecordsCount"
+                                         [rowsPerPageOptions]="primengTableHelper.predefinedRecordsCountPerPage">
+                            </p-paginator>
+                            <span class="total-records-count">
+                                {{l('TotalRecordsCount', primengTableHelper.totalRecordsCount)}}
+                            </span>
+                        </div>
+                    </div>
+                    <!--<Primeng-Datatable-End>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <createOrEditFlightInformationModal #createOrEditFlightInformationModal (modalSave)="getFlightInformations()"></createOrEditFlightInformationModal>
+    <viewFlightInformationModal #viewFlightInformationModal></viewFlightInformationModal>
+    
+  </div>
+</div>
