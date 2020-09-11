@@ -28,27 +28,27 @@
                                           [url]="uploadUrl"
                                           maxFileSize="1000000"
                                           (onUpload)="onUpload($event)"
-                                          (onBeforeSend)="onBeforeSend($event)">
+                                          (onBeforeSend)="onBeforeSend($event)"
+                                          [(ngModel)]="files">
                                 <ng-template pTemplate="content">
-                                    <ul *ngIf="uploadedFiles.length">
-                                        <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes                                            
-                                        </li>
-                                        <li *ngFor="let file of uploadedFiles2">{{file.name}} - {{file.size}} bytes 
-                                            -- {{file.contentType}} -- {{file.id}}--{{file.name}} - {{file.size}}
+                                    <ul *ngIf="uploadedFiles2.length">
+                                        <!-- <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes  
+                                            {{file.id}} - {{file.contentType}}                                          
+                                        </li> -->
+                                        <li *ngFor="let file of uploadedFiles2;let i = index">
                                             <a href="{{getUrl}}?fileId={{file.id}}&contentType={{file.contentType}}&fileName={{file.name}}">
                                                 {{file.name}}
-                                            </a>                                            
+                                            </a>  
+                                            <button type="button" class="close" (click)="onDeleteAttachment(file.id)">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>  
+                                            <input type="hidden" id="FileId{{i}}" class="form-control" [(ngModel)]="testEntity.testUpload" name="FileId{{i}}"/>
                                         </li>
-                                      
+                                        
                                     </ul>
                                     
                                 </ng-template>
                             </p-fileUpload>
-                            <div class="card" *ngFor="let att of this.testEntity.testUpload; let i = index">
-                                <a href="{{getUrl}}?fileId={{att.id}}&contentType={{att.contentType}}">
-                                    {{att.name}}
-                                </a>
-                            </div>
                 </div>
 
                

@@ -1,8 +1,10 @@
 ﻿import { Component, ViewChild, Injector, Output, EventEmitter } from '@angular/core';
 import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
-import { TestEntitiesServiceProxy, CreateOrEditTestEntityDto,
-     DemoUiComponentsServiceProxy, TestUploadDto } from '@shared/service-proxies/service-proxies';
+import {
+    TestEntitiesServiceProxy, CreateOrEditTestEntityDto,
+    DemoUiComponentsServiceProxy, TestUploadDto
+} from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileUploader, FileUploaderOptions, FileItem } from 'ng2-file-upload';
 import { AppConsts } from '@shared/AppConsts';
@@ -33,6 +35,9 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
     deleteUrl: string;
     uploadedFiles: any[] = [];
     uploadedFiles2: any[] = [];
+    file: TestUploadDto[] = [];
+    files: any;
+    arrIdFile = [];
 
     testEntity: CreateOrEditTestEntityDto = new CreateOrEditTestEntityDto();
 
@@ -46,8 +51,9 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
     ) {
         super(injector);
         this.uploadUrl = AppConsts.remoteServiceBaseUrl + '/TestUpload/UploadFiles';
-        this.getUrl = AppConsts.remoteServiceBaseUrl + '/TestUploadH/DownloadFileH';
-        this.deleteUrl = AppConsts.remoteServiceBaseUrl + '/TestUploadH/DeleteFile';
+        this.getUrl = AppConsts.remoteServiceBaseUrl + '/TestUpload/DownloadFile';
+        this.deleteUrl = AppConsts.remoteServiceBaseUrl + '/TestUploadH/DeleteFileH';
+        this.uploadedFiles2 = [];
         console.log('Down URL : ' + this.getUrl);
         console.log('Upload URL : ' + this.uploadUrl);
     }
@@ -57,7 +63,8 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
         if (!testEntityId) {
             this.testEntity = new CreateOrEditTestEntityDto();
             this.testEntity.id = testEntityId;
-
+            this.uploadedFiles2 = [];
+            this.arrIdFile = [];
             this.active = true;
             this.modal.show();
         } else {
@@ -72,25 +79,51 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
     }
 
     // upload completed event
+
     onUpload(event): void {
-        const jsonResult = JSON.parse(event.xhr.response);
-        console.log('Test json: '+ jsonResult);
-        let attachment = new TestUploadDto();
         console.log('Upload File');
-        for (const file of event.files) {
-            this.uploadedFiles.push(file);
+        this.files = event.originalEvent.body.result;
+        console.log(this.files);
+        // for (const file of event.files) {
+        //     this.uploadedFiles.push(file);
+        // }
+        for (let file of this.files) {
+            this.uploadedFiles2.push(file);
+            console.log(file.id);
+            this.arrIdFile.push(file.id);
         }
+        this.testEntity.testUploadListID = this.arrIdFile;
+        console.log(this.testEntity);
     }
 
     onBeforeSend(event): void {
         console.log('before send');
         event.xhr.setRequestHeader('Authorization', 'Bearer ' + abp.auth.getToken());
     }
+
+    onDeleteAttachment(id: string) {
+        // const index: number = this.uploadedFiles2.indexOf(id);
+        const indexi = this.uploadedFiles2.findIndex(x => x.id === id);
+        console.log('delete attachment' + indexi);
+        this.message.confirm(
+            '',
+            this.l('AreYouSure'),
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    this._testEntitiesServiceProxy.deleteAttachment(id).subscribe(result => {
+                        this.uploadedFiles2.splice(indexi, 1);
+                    });
+                }
+            }
+        );
+    }
     ////////////////////
 
 
     save(): void {
         this.saving = true;
+        console.log('TestEntity : ' + this.testEntity);
+        console.log('Save : ' + this.testEntity.testUpload);
         this._testEntitiesServiceProxy.createOrEdit(this.testEntity)
             .pipe(finalize(() => { this.saving = false; }))
             .subscribe(() => {
@@ -107,5 +140,6 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
     }
 
 }
+
 
 

@@ -11691,10 +11691,11 @@ export class TestEntitiesServiceProxy {
     /**
      * @param name (optional) 
      * @param testUpload (optional) 
+     * @param testUploadListID (optional) 
      * @param id (optional) 
      * @return Success
      */
-    getTestID(name: string | undefined, testUpload: TestUploadDto[] | undefined, id: number | undefined): Observable<number> {
+    getTestID(name: string | undefined, testUpload: TestUploadDto[] | undefined, testUploadListID: string[] | undefined, id: number | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/app/TestEntities/GetTestID?";
         if (name === null)
             throw new Error("The parameter 'name' cannot be null.");
@@ -11709,6 +11710,10 @@ export class TestEntitiesServiceProxy {
         				url_ += "TestUpload[" + index + "]." + attr + "=" + encodeURIComponent("" + (<any>item)[attr]) + "&";
         			}
             });
+        if (testUploadListID === null)
+            throw new Error("The parameter 'testUploadListID' cannot be null.");
+        else if (testUploadListID !== undefined)
+            testUploadListID && testUploadListID.forEach(item => { url_ += "TestUploadListID=" + encodeURIComponent("" + item) + "&"; });
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined)
@@ -11757,6 +11762,58 @@ export class TestEntitiesServiceProxy {
             }));
         }
         return _observableOf<number>(<any>null);
+    }
+
+    /**
+     * @param input (optional) 
+     * @return Success
+     */
+    deleteAttachment(input: string | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/TestEntities/DeleteAttachment?";
+        if (input === null)
+            throw new Error("The parameter 'input' cannot be null.");
+        else if (input !== undefined)
+            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteAttachment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteAttachment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteAttachment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -28818,6 +28875,7 @@ export interface ITestUploadDto {
 export class CreateOrEditTestEntityDto implements ICreateOrEditTestEntityDto {
     name!: string | undefined;
     testUpload!: TestUploadDto[] | undefined;
+    testUploadListID!: string[] | undefined;
     id!: number | undefined;
 
     constructor(data?: ICreateOrEditTestEntityDto) {
@@ -28836,6 +28894,11 @@ export class CreateOrEditTestEntityDto implements ICreateOrEditTestEntityDto {
                 this.testUpload = [] as any;
                 for (let item of data["testUpload"])
                     this.testUpload!.push(TestUploadDto.fromJS(item));
+            }
+            if (Array.isArray(data["testUploadListID"])) {
+                this.testUploadListID = [] as any;
+                for (let item of data["testUploadListID"])
+                    this.testUploadListID!.push(item);
             }
             this.id = data["id"];
         }
@@ -28856,6 +28919,11 @@ export class CreateOrEditTestEntityDto implements ICreateOrEditTestEntityDto {
             for (let item of this.testUpload)
                 data["testUpload"].push(item.toJSON());
         }
+        if (Array.isArray(this.testUploadListID)) {
+            data["testUploadListID"] = [];
+            for (let item of this.testUploadListID)
+                data["testUploadListID"].push(item);
+        }
         data["id"] = this.id;
         return data; 
     }
@@ -28864,6 +28932,7 @@ export class CreateOrEditTestEntityDto implements ICreateOrEditTestEntityDto {
 export interface ICreateOrEditTestEntityDto {
     name: string | undefined;
     testUpload: TestUploadDto[] | undefined;
+    testUploadListID: string[] | undefined;
     id: number | undefined;
 }
 
