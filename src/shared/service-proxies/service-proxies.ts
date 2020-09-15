@@ -11576,6 +11576,58 @@ export class TestEntitiesServiceProxy {
     }
 
     /**
+     * @param guidFfile (optional) 
+     * @return Success
+     */
+    deleteFile(guidFfile: string | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/TestEntities/DeleteFile?";
+        if (guidFfile === null)
+            throw new Error("The parameter 'guidFfile' cannot be null.");
+        else if (guidFfile !== undefined)
+            url_ += "GuidFfile=" + encodeURIComponent("" + guidFfile) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteFile(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteFile(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteFile(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @param id (optional) 
      * @return Success
      */
@@ -11691,11 +11743,13 @@ export class TestEntitiesServiceProxy {
     /**
      * @param name (optional) 
      * @param testUpload (optional) 
+     * @param tempUpload (optional) 
      * @param testUploadListID (optional) 
+     * @param tempUploadListID (optional) 
      * @param id (optional) 
      * @return Success
      */
-    getTestID(name: string | undefined, testUpload: TestUploadDto[] | undefined, testUploadListID: string[] | undefined, id: number | undefined): Observable<number> {
+    getTestID(name: string | undefined, testUpload: TestUploadDto[] | undefined, tempUpload: TempUploadDto[] | undefined, testUploadListID: string[] | undefined, tempUploadListID: string[] | undefined, id: number | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/app/TestEntities/GetTestID?";
         if (name === null)
             throw new Error("The parameter 'name' cannot be null.");
@@ -11710,10 +11764,23 @@ export class TestEntitiesServiceProxy {
         				url_ += "TestUpload[" + index + "]." + attr + "=" + encodeURIComponent("" + (<any>item)[attr]) + "&";
         			}
             });
+        if (tempUpload === null)
+            throw new Error("The parameter 'tempUpload' cannot be null.");
+        else if (tempUpload !== undefined)
+            tempUpload && tempUpload.forEach((item, index) => { 
+                for (let attr in item)
+        			if (item.hasOwnProperty(attr)) {
+        				url_ += "TempUpload[" + index + "]." + attr + "=" + encodeURIComponent("" + (<any>item)[attr]) + "&";
+        			}
+            });
         if (testUploadListID === null)
             throw new Error("The parameter 'testUploadListID' cannot be null.");
         else if (testUploadListID !== undefined)
             testUploadListID && testUploadListID.forEach(item => { url_ += "TestUploadListID=" + encodeURIComponent("" + item) + "&"; });
+        if (tempUploadListID === null)
+            throw new Error("The parameter 'tempUploadListID' cannot be null.");
+        else if (tempUploadListID !== undefined)
+            tempUploadListID && tempUploadListID.forEach(item => { url_ += "TempUploadListID=" + encodeURIComponent("" + item) + "&"; });
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined)
@@ -11798,6 +11865,58 @@ export class TestEntitiesServiceProxy {
     }
 
     protected processDeleteAttachment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param input (optional) 
+     * @return Success
+     */
+    deleteAttachmentTemp(input: string | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/TestEntities/DeleteAttachmentTemp?";
+        if (input === null)
+            throw new Error("The parameter 'input' cannot be null.");
+        else if (input !== undefined)
+            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteAttachmentTemp(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteAttachmentTemp(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteAttachmentTemp(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -28664,8 +28783,98 @@ export interface ITenantSettingsEditDto {
     otherSettings: TenantOtherSettingsEditDto | undefined;
 }
 
+export class TempUploadDto implements ITempUploadDto {
+    bytes!: string | undefined;
+    testId!: number;
+    name!: string | undefined;
+    contentType!: string | undefined;
+    remark!: string | undefined;
+    tenantId!: number;
+    isDeleted!: boolean;
+    deleterUserId!: number | undefined;
+    deletionTime!: moment.Moment | undefined;
+    lastModificationTime!: moment.Moment | undefined;
+    lastModifierUserId!: number | undefined;
+    creationTime!: moment.Moment;
+    creatorUserId!: number | undefined;
+    id!: string;
+
+    constructor(data?: ITempUploadDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.bytes = data["bytes"];
+            this.testId = data["testId"];
+            this.name = data["name"];
+            this.contentType = data["contentType"];
+            this.remark = data["remark"];
+            this.tenantId = data["tenantId"];
+            this.isDeleted = data["isDeleted"];
+            this.deleterUserId = data["deleterUserId"];
+            this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = data["lastModifierUserId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): TempUploadDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TempUploadDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bytes"] = this.bytes;
+        data["testId"] = this.testId;
+        data["name"] = this.name;
+        data["contentType"] = this.contentType;
+        data["remark"] = this.remark;
+        data["tenantId"] = this.tenantId;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ITempUploadDto {
+    bytes: string | undefined;
+    testId: number;
+    name: string | undefined;
+    contentType: string | undefined;
+    remark: string | undefined;
+    tenantId: number;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    id: string;
+}
+
 export class TestEntityDto implements ITestEntityDto {
     name!: string | undefined;
+    tempUpload!: TempUploadDto[] | undefined;
+    tempUploadListID!: string[] | undefined;
     id!: number;
 
     constructor(data?: ITestEntityDto) {
@@ -28680,6 +28889,16 @@ export class TestEntityDto implements ITestEntityDto {
     init(data?: any) {
         if (data) {
             this.name = data["name"];
+            if (Array.isArray(data["tempUpload"])) {
+                this.tempUpload = [] as any;
+                for (let item of data["tempUpload"])
+                    this.tempUpload!.push(TempUploadDto.fromJS(item));
+            }
+            if (Array.isArray(data["tempUploadListID"])) {
+                this.tempUploadListID = [] as any;
+                for (let item of data["tempUploadListID"])
+                    this.tempUploadListID!.push(item);
+            }
             this.id = data["id"];
         }
     }
@@ -28694,6 +28913,16 @@ export class TestEntityDto implements ITestEntityDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
+        if (Array.isArray(this.tempUpload)) {
+            data["tempUpload"] = [];
+            for (let item of this.tempUpload)
+                data["tempUpload"].push(item.toJSON());
+        }
+        if (Array.isArray(this.tempUploadListID)) {
+            data["tempUploadListID"] = [];
+            for (let item of this.tempUploadListID)
+                data["tempUploadListID"].push(item);
+        }
         data["id"] = this.id;
         return data; 
     }
@@ -28701,11 +28930,15 @@ export class TestEntityDto implements ITestEntityDto {
 
 export interface ITestEntityDto {
     name: string | undefined;
+    tempUpload: TempUploadDto[] | undefined;
+    tempUploadListID: string[] | undefined;
     id: number;
 }
 
 export class GetTestEntityForViewDto implements IGetTestEntityForViewDto {
     testEntity!: TestEntityDto | undefined;
+    tempUpload!: TempUploadDto[] | undefined;
+    tempUploadListID!: string[] | undefined;
 
     constructor(data?: IGetTestEntityForViewDto) {
         if (data) {
@@ -28719,6 +28952,16 @@ export class GetTestEntityForViewDto implements IGetTestEntityForViewDto {
     init(data?: any) {
         if (data) {
             this.testEntity = data["testEntity"] ? TestEntityDto.fromJS(data["testEntity"]) : <any>undefined;
+            if (Array.isArray(data["tempUpload"])) {
+                this.tempUpload = [] as any;
+                for (let item of data["tempUpload"])
+                    this.tempUpload!.push(TempUploadDto.fromJS(item));
+            }
+            if (Array.isArray(data["tempUploadListID"])) {
+                this.tempUploadListID = [] as any;
+                for (let item of data["tempUploadListID"])
+                    this.tempUploadListID!.push(item);
+            }
         }
     }
 
@@ -28732,12 +28975,24 @@ export class GetTestEntityForViewDto implements IGetTestEntityForViewDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["testEntity"] = this.testEntity ? this.testEntity.toJSON() : <any>undefined;
+        if (Array.isArray(this.tempUpload)) {
+            data["tempUpload"] = [];
+            for (let item of this.tempUpload)
+                data["tempUpload"].push(item.toJSON());
+        }
+        if (Array.isArray(this.tempUploadListID)) {
+            data["tempUploadListID"] = [];
+            for (let item of this.tempUploadListID)
+                data["tempUploadListID"].push(item);
+        }
         return data; 
     }
 }
 
 export interface IGetTestEntityForViewDto {
     testEntity: TestEntityDto | undefined;
+    tempUpload: TempUploadDto[] | undefined;
+    tempUploadListID: string[] | undefined;
 }
 
 export class PagedResultDtoOfGetTestEntityForViewDto implements IPagedResultDtoOfGetTestEntityForViewDto {
@@ -28794,6 +29049,7 @@ export class TestUploadDto implements ITestUploadDto {
     name!: string | undefined;
     contentType!: string | undefined;
     remark!: string | undefined;
+    tenantId!: number;
     isDeleted!: boolean;
     deleterUserId!: number | undefined;
     deletionTime!: moment.Moment | undefined;
@@ -28819,6 +29075,7 @@ export class TestUploadDto implements ITestUploadDto {
             this.name = data["name"];
             this.contentType = data["contentType"];
             this.remark = data["remark"];
+            this.tenantId = data["tenantId"];
             this.isDeleted = data["isDeleted"];
             this.deleterUserId = data["deleterUserId"];
             this.deletionTime = data["deletionTime"] ? moment(data["deletionTime"].toString()) : <any>undefined;
@@ -28844,6 +29101,7 @@ export class TestUploadDto implements ITestUploadDto {
         data["name"] = this.name;
         data["contentType"] = this.contentType;
         data["remark"] = this.remark;
+        data["tenantId"] = this.tenantId;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -28862,6 +29120,7 @@ export interface ITestUploadDto {
     name: string | undefined;
     contentType: string | undefined;
     remark: string | undefined;
+    tenantId: number;
     isDeleted: boolean;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -28875,7 +29134,9 @@ export interface ITestUploadDto {
 export class CreateOrEditTestEntityDto implements ICreateOrEditTestEntityDto {
     name!: string | undefined;
     testUpload!: TestUploadDto[] | undefined;
+    tempUpload!: TempUploadDto[] | undefined;
     testUploadListID!: string[] | undefined;
+    tempUploadListID!: string[] | undefined;
     id!: number | undefined;
 
     constructor(data?: ICreateOrEditTestEntityDto) {
@@ -28895,10 +29156,20 @@ export class CreateOrEditTestEntityDto implements ICreateOrEditTestEntityDto {
                 for (let item of data["testUpload"])
                     this.testUpload!.push(TestUploadDto.fromJS(item));
             }
+            if (Array.isArray(data["tempUpload"])) {
+                this.tempUpload = [] as any;
+                for (let item of data["tempUpload"])
+                    this.tempUpload!.push(TempUploadDto.fromJS(item));
+            }
             if (Array.isArray(data["testUploadListID"])) {
                 this.testUploadListID = [] as any;
                 for (let item of data["testUploadListID"])
                     this.testUploadListID!.push(item);
+            }
+            if (Array.isArray(data["tempUploadListID"])) {
+                this.tempUploadListID = [] as any;
+                for (let item of data["tempUploadListID"])
+                    this.tempUploadListID!.push(item);
             }
             this.id = data["id"];
         }
@@ -28919,10 +29190,20 @@ export class CreateOrEditTestEntityDto implements ICreateOrEditTestEntityDto {
             for (let item of this.testUpload)
                 data["testUpload"].push(item.toJSON());
         }
+        if (Array.isArray(this.tempUpload)) {
+            data["tempUpload"] = [];
+            for (let item of this.tempUpload)
+                data["tempUpload"].push(item.toJSON());
+        }
         if (Array.isArray(this.testUploadListID)) {
             data["testUploadListID"] = [];
             for (let item of this.testUploadListID)
                 data["testUploadListID"].push(item);
+        }
+        if (Array.isArray(this.tempUploadListID)) {
+            data["tempUploadListID"] = [];
+            for (let item of this.tempUploadListID)
+                data["tempUploadListID"].push(item);
         }
         data["id"] = this.id;
         return data; 
@@ -28932,7 +29213,9 @@ export class CreateOrEditTestEntityDto implements ICreateOrEditTestEntityDto {
 export interface ICreateOrEditTestEntityDto {
     name: string | undefined;
     testUpload: TestUploadDto[] | undefined;
+    tempUpload: TempUploadDto[] | undefined;
     testUploadListID: string[] | undefined;
+    tempUploadListID: string[] | undefined;
     id: number | undefined;
 }
 

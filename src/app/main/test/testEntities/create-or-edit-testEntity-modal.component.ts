@@ -32,6 +32,7 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
     //New file upload
     uploadUrl: string;
     getUrl: string;
+    getUrlTemp: string;
     deleteUrl: string;
     uploadedFiles: any[] = [];
     uploadedFiles2: any[] = [];
@@ -52,6 +53,7 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
         super(injector);
         this.uploadUrl = AppConsts.remoteServiceBaseUrl + '/TestUpload/UploadFiles';
         this.getUrl = AppConsts.remoteServiceBaseUrl + '/TestUpload/DownloadFile';
+        this.getUrlTemp = AppConsts.remoteServiceBaseUrl + '/TestUpload/DownloadFileTemp';
         this.deleteUrl = AppConsts.remoteServiceBaseUrl + '/TestUploadH/DeleteFileH';
         this.uploadedFiles2 = [];
         console.log('Down URL : ' + this.getUrl);
@@ -70,8 +72,8 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
         } else {
             this._testEntitiesServiceProxy.getTestEntityForEdit(testEntityId).subscribe(result => {
                 this.testEntity = result.testEntity;
-
-
+                this.uploadedFiles2 = [];
+                this.arrIdFile = [];
                 this.active = true;
                 this.modal.show();
             });
@@ -101,7 +103,7 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
         event.xhr.setRequestHeader('Authorization', 'Bearer ' + abp.auth.getToken());
     }
 
-    onDeleteAttachment(id: string) {
+    onDeleteAttachmentTemp(id: string) {
         // const index: number = this.uploadedFiles2.indexOf(id);
         const indexi = this.uploadedFiles2.findIndex(x => x.id === id);
         console.log('delete attachment' + indexi);
@@ -110,9 +112,32 @@ export class CreateOrEditTestEntityModalComponent extends AppComponentBase {
             this.l('AreYouSure'),
             (isConfirmed) => {
                 if (isConfirmed) {
-                    this._testEntitiesServiceProxy.deleteAttachment(id).subscribe(result => {
+                    this._testEntitiesServiceProxy.deleteAttachmentTemp(id).subscribe(result => {
                         this.uploadedFiles2.splice(indexi, 1);
+                        this.arrIdFile.splice(indexi, 1);
                     });
+                }
+            }
+        );
+    }
+
+    onDeleteAttachment(id: string) {
+        const index = this.testEntity.tempUpload.findIndex(x => x.id === id);
+        const indexi = this.uploadedFiles2.findIndex(x => x.id === id);
+        console.log('delete attachment' + index);
+        this.message.confirm(
+            '',
+            this.l('AreYouSure'),
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    this._testEntitiesServiceProxy.deleteAttachment(id).subscribe(result => {
+                        this.testEntity.tempUpload.splice(index, 1);
+                    });
+                    //hhh
+                    // this._testEntitiesServiceProxy.getTestEntityForEdit(testId).subscribe(result => {
+                    //     this.testEntity = result.testEntity;
+                    //     console.log('delete attachment' + this.testEntity);
+                    // });
                 }
             }
         );

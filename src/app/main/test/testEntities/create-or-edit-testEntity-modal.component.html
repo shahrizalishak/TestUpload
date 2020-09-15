@@ -22,7 +22,8 @@
                 <!-- New upload -->
                 <div class="kt-portlet__body">
                             <label for="DefaultFileUploadFileInput">Default file uploader</label>
-                            <p-fileUpload multiple="multiple"
+                            <p-fileUpload  mode="advanced"
+                                            auto="true"
                                           id="DefaultFileUploadFileInput"
                                           name="DefaultFileUploadFileInput[]"
                                           [url]="uploadUrl"
@@ -35,21 +36,59 @@
                                         <!-- <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes  
                                             {{file.id}} - {{file.contentType}}                                          
                                         </li> -->
-                                        <li *ngFor="let file of uploadedFiles2;let i = index">
-                                            <a href="{{getUrl}}?fileId={{file.id}}&contentType={{file.contentType}}&fileName={{file.name}}">
-                                                {{file.name}}
+                                        <li *ngFor="let fileNew of uploadedFiles2;let i = index">
+                                            <a href="{{getUrlTemp}}?fileId={{fileNew.id}}&contentType={{fileNew.contentType}}&fileName={{fileNew.name}}">
+                                                {{fileNew.name}}
                                             </a>  
-                                            <button type="button" class="close" (click)="onDeleteAttachment(file.id)">
+                                            <button type="button" class="close" (click)="onDeleteAttachmentTemp(fileNew.id)">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>  
-                                            <input type="hidden" id="FileId{{i}}" class="form-control" [(ngModel)]="testEntity.testUpload" name="FileId{{i}}"/>
                                         </li>
-                                        
                                     </ul>
-                                    
+                                    <ul>
+                                      <!-- File from upload table -->
+                                      <li *ngFor="let file of testEntity.tempUpload;let i = index">
+                                        <a href="{{getUrl}}?fileId={{file.id}}&contentType={{file.contentType}}&fileName={{file.name}}">
+                                            {{file.name}}
+                                        </a>  
+                                        <button type="button" class="close" (click)="onDeleteAttachment(file.id)">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>  
+                                    </li>
+                                </ul>
                                 </ng-template>
                             </p-fileUpload>
                 </div>
+
+                <!-- <div class="kt-portlet__body">
+                    <label for="DefaultFileUploadFileInput">Default file uploader</label>
+                    <p-fileUpload multiple="multiple"
+                                  id="DefaultFileUploadFileInput"
+                                  name="DefaultFileUploadFileInput[]"
+                                  [url]="uploadUrl"
+                                  maxFileSize="1000000"
+                                  (onUpload)="onUpload($event)"
+                                  (onBeforeSend)="onBeforeSend($event)"
+                                  [(ngModel)]="files">
+                        <ng-template pTemplate="content">
+                            <!-- <ul *ngIf="testEntity.tempUploadListID.length"> -->
+                                <!-- <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes  
+                                    {{file.id}} - {{file.contentType}}                                          
+                                </li> -->
+                                <!-- <li *ngFor="let file of testEntity.tempUpload;let i = index">
+                                    <a href="{{getUrl}}?fileId={{file.id}}&contentType={{file.contentType}}&fileName={{file.name}}">
+                                        {{file.name}}
+                                    </a>  
+                                    <button type="button" class="close" (click)="onDeleteAttachment(file.id)">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>  
+                                </li>
+                                
+                            <!-- </ul> -->
+                            
+                        <!-- </ng-template>
+                    </p-fileUpload>
+                </div> -->
 
                
 
